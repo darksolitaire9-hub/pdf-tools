@@ -7,6 +7,6 @@
 			"pnpm": "true"
 		}
 	},
-	"postCreateCommand": "bash .devcontainer/scripts/setup-svelte.sh",
+	"postCreateCommand": "bash .devcontainer/scripts/setup-svelte.sh && bash .devcontainer/scripts/setup-gh.sh",
 	"remoteUser": "vscode"
 }
