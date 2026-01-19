@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+# Get the commit message file
+COMMIT_MSG_FILE=$1
+
+# Read the current commit message
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Only process if message doesn't already have an emoji in scope
+if ! echo "$COMMIT_MSG" | grep -qE "^\w+\([^)]*[😀-🙏]\)"; then
+  # Extract the type from the commit message (before colon or parenthesis)
+  TYPE=$(echo "$COMMIT_MSG" | grep -oE "^[a-z]+")
+  
+  # Map types to emojis
+  case "$TYPE" in
+    feat)     EMOJI="✨" ;;
+    fix)      EMOJI="🐛" ;;
+    chore)    EMOJI="🔧" ;;
+    docs)     EMOJI="📝" ;;
+    refactor) EMOJI="♻️" ;;
+    test)     EMOJI="✅" ;;
+    build)    EMOJI="📦" ;;
+    ci)       EMOJI="👷" ;;
+    perf)     EMOJI="⚡" ;;
+    style)    EMOJI="💄" ;;
+    *)        EMOJI="" ;;
+  esac
+  
+  # Add emoji to scope if one was found
+  if [ -n "$EMOJI" ]; then
+    # Check if there's already a scope
+    if echo "$COMMIT_MSG" | grep -qE "^\w+\([^)]+\):"; then
+      # Has scope: feat(auth): message -> feat(auth-✨): message
+      echo "$COMMIT_MSG" | sed -E "s/^([a-z]+)\(([^)]+)\):/\1(\2-$EMOJI):/" > "$COMMIT_MSG_FILE"
+    else
+      # No scope: feat: message -> feat(✨): message
+      echo "$COMMIT_MSG" | sed -E "s/^([a-z]+):/\1($EMOJI):/" > "$COMMIT_MSG_FILE"
+    fi
+  fi
+fi

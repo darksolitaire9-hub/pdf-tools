@@ -1,12 +1,12 @@
 {
-  "name": "pdf-tools",
-  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "24.13",
-      "pnpm": "true"
-    }
-  },
-  "postCreateCommand": "bash .devcontainer/scripts/setup-svelte.sh",
-  "remoteUser": "vscode"
+	"name": "pdf-tools",
+	"image": "mcr.microsoft.com/devcontainers/base:bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "24.13",
+			"pnpm": "true"
+		}
+	},
+	"postCreateCommand": "bash .devcontainer/scripts/setup-svelte.sh",
+	"remoteUser": "vscode"
 }
