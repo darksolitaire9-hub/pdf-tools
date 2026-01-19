@@ -3,19 +3,10 @@
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "20",
+      "version": "24.13",
       "pnpm": "true"
     }
   },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "ms-vscode.vscode-typescript-next"
-      ]
-    }
-  },
-  "postCreateCommand": "pnpm install",
+  "postCreateCommand": "bash .devcontainer/scripts/bootstrap.sh",
   "remoteUser": "vscode"
 }
