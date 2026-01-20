@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter web dev",
+    "dev": "pnpm --filter @pdf-tools/web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
@@ -15,9 +15,12 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "prettier": "^3.7.4",
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
     "eslint": "^9.39.1",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   }
 }
