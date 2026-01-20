@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ES2022",
+		"moduleResolution": "Node",
+		"strict": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"composite": true,
+		"baseUrl": ".",
+		"paths": {
+			"@pdf-tools/domain": ["packages/domain/src"],
+			"@pdf-tools/pdf-engine": ["packages/pdf-engine/src"],
+			"@pdf-tools/shared": ["packages/shared/src"]
+		}
+	}
+}
