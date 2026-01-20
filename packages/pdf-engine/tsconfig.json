@@ -1,10 +1,11 @@
 {
-	"extends": "../../tsconfig.base.json",
-	"compilerOptions": {
-		"outDir": "dist",
-		"rootDir": "src",
-		"lib": ["ES2022", "WebWorker"]
-	},
-	"include": ["src"],
-	"references": [{ "path": "../domain" }]
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../domain" },
+    { "path": "../shared" }
+  ]
 }
