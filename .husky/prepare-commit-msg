@@ -1,17 +1,14 @@
 #!/usr/bin/env sh
 
-# Get the commit message file
 COMMIT_MSG_FILE=$1
 
-# Read the current commit message
-COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+# Read only the first line (header)
+HEADER=$(head -n 1 "$COMMIT_MSG_FILE")
 
-# Only process if message doesn't already have an emoji in scope
-if ! echo "$COMMIT_MSG" | grep -qE "^\w+\([^)]*[😀-🙏]\)"; then
-  # Extract the type from the commit message (before colon or parenthesis)
-  TYPE=$(echo "$COMMIT_MSG" | grep -oE "^[a-z]+")
+# Only process if header doesn't already contain an emoji
+if ! echo "$HEADER" | grep -qE "^\w+\([^)]*[😀-🙏]\)"; then
+  TYPE=$(echo "$HEADER" | grep -oE "^[a-z]+")
   
-  # Map types to emojis
   case "$TYPE" in
     feat)     EMOJI="✨" ;;
     fix)      EMOJI="🐛" ;;
@@ -25,16 +22,16 @@ if ! echo "$COMMIT_MSG" | grep -qE "^\w+\([^)]*[😀-🙏]\)"; then
     style)    EMOJI="💄" ;;
     *)        EMOJI="" ;;
   esac
-  
-  # Add emoji to scope if one was found
+
   if [ -n "$EMOJI" ]; then
-    # Check if there's already a scope
-    if echo "$COMMIT_MSG" | grep -qE "^\w+\([^)]+\):"; then
-      # Has scope: feat(auth): message -> feat(auth-✨): message
-      echo "$COMMIT_MSG" | sed -E "s/^([a-z]+)\(([^)]+)\):/\1(\2-$EMOJI):/" > "$COMMIT_MSG_FILE"
+    if echo "$HEADER" | grep -qE "^\w+\([^)]+\):"; then
+      NEW_HEADER=$(echo "$HEADER" | sed -E "s/^([a-z]+)\(([^)]+)\):/\1(\2-$EMOJI):/")
     else
-      # No scope: feat: message -> feat(✨): message
-      echo "$COMMIT_MSG" | sed -E "s/^([a-z]+):/\1($EMOJI):/" > "$COMMIT_MSG_FILE"
+      NEW_HEADER=$(echo "$HEADER" | sed -E "s/^([a-z]+):/\1($EMOJI):/")
     fi
+
+    # Replace only the first line, keep the body intact
+    tail -n +2 "$COMMIT_MSG_FILE" | sed "1s/.*/$NEW_HEADER/" > "$COMMIT_MSG_FILE.tmp"
+    mv "$COMMIT_MSG_FILE.tmp" "$COMMIT_MSG_FILE"
   fi
 fi
