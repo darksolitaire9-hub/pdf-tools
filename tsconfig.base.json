@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@pdf-tools/domain": ["packages/domain/src"],
+      "@pdf-tools/pdf-engine": ["packages/pdf-engine/src"],
+      "@pdf-tools/shared": ["packages/shared/src"]
+    }
+  }
+}
