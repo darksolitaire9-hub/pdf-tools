@@ -7,36 +7,79 @@ import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 import svelteConfig from './apps/web/svelte.config.js';
-
+import pluginImport from 'eslint-plugin-import';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 export default defineConfig(
-	includeIgnoreFile(gitignorePath),
-	js.configs.recommended,
-	...ts.configs.recommended,
-	...svelte.configs.recommended,
-	prettier,
-	...svelte.configs.prettier,
-	{
-		languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    includeIgnoreFile(gitignorePath),
+    js.configs.recommended,
+    ...ts.configs.recommended,
+    ...svelte.configs.recommended,
+    prettier,
+    ...svelte.configs.prettier,
 
-		rules: {
-			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
-		}
-	},
-	{
-		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
+    // 🌿 Global rules
+    {
+        languageOptions: { globals: { ...globals.browser, ...globals.node } },
+        rules: {
+            // typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
+            'no-undef': 'off'
+        }
+    },
 
-		languageOptions: {
-			parserOptions: {
-				projectService: true,
-				extraFileExtensions: ['.svelte'],
-				parser: ts.parser,
-				svelteConfig
-			}
-		}
-	}
+    // 🌱 Architecture boundaries (NEW BLOCK)
+    {
+        files: ['**/*.ts', '**/*.js', '**/*.svelte.ts', '**/*.svelte.js'],
+
+        plugins: { import: pluginImport },
+
+        rules: {
+            // 1. Prevent circular imports
+            'import/no-cycle': ['error', { maxDepth: 1 }],
+
+            // 2. Enforce layer boundaries
+            'import/no-restricted-paths': [
+                'error',
+                {
+                    zones: [
+                        {
+                            target: './packages/domain',
+                            from: ['./packages/pdf-engine', './apps/web']
+                        },
+                        {
+                            target: './packages/pdf-engine',
+                            from: ['./apps/web']
+                        }
+                    ]
+                }
+            ],
+
+            // 3. Prevent barrel imports inside SvelteKit
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        '$lib/index',
+                        '$lib/**/index',
+                        '**/src/lib/index',
+                        '**/src/lib/**/index'
+                    ]
+                }
+            ]
+        }
+    },
+
+    // 🌻 Svelte overrides
+    {
+        files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                extraFileExtensions: ['.svelte'],
+                parser: ts.parser,
+                svelteConfig
+            }
+        }
+    }
 );
