@@ -23,15 +23,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'pnpm'
 
-      - name: Install dependencies (include devDependencies)
-        run: pnpm install --frozen-lockfile --prod=false
-
-      - name: Debug (verify svelte-kit exists)
+      - name: Get pnpm store directory
+        shell: bash
         run: |
-          pnpm --filter "@pdf-tools/web" list @sveltejs/kit || true
-          ls -la apps/web/node_modules/.bin || true
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Debug workspace structure
+        run: |
+          echo "=== Checking apps/web/node_modules ==="
+          ls -la apps/web/node_modules/.bin/ || echo "No .bin directory"
+          echo "=== Checking @sveltejs/kit installation ==="
+          pnpm --filter "@pdf-tools/web" list @sveltejs/kit
 
       - name: Generate SvelteKit files
         run: pnpm --filter "@pdf-tools/web" run sync
@@ -55,10 +69,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'pnpm'
 
-      - name: Install dependencies (include devDependencies)
-        run: pnpm install --frozen-lockfile --prod=false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting with Prettier
         run: pnpm run format:check
@@ -79,10 +105,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'pnpm'
 
-      - name: Install dependencies (include devDependencies)
-        run: pnpm install --frozen-lockfile --prod=false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build workspace packages
         run: pnpm --filter "@pdf-tools/domain" --filter "@pdf-tools/pdf-engine" --filter "@pdf-tools/shared" build
