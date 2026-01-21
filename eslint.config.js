@@ -26,10 +26,8 @@ export default [
 		],
 		languageOptions: {
 			parserOptions: {
-				project: true,
-				tsconfigRootDir: __dirname
-			}
-		},
+project: false,
+			}},
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'warn',
 			'@typescript-eslint/no-unused-vars': [
