@@ -1,11 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src"],
-  "references": [
-    { "path": "../domain" },
-    { "path": "../shared" }
-  ]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "dist"
+	},
+	"include": ["src"],
+	"references": [{ "path": "../domain" }, { "path": "../shared" }]
 }

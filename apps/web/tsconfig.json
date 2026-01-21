@@ -1,9 +1,16 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"include": ["src", ".svelte-kit/types"],
+	"exclude": ["src/**/*.spec.ts"],
 	"references": [
-		{ "path": "../../packages/domain" },
-		{ "path": "../../packages/pdf-engine" },
-		{ "path": "../../packages/shared" }
+		{
+			"path": "../../packages/domain"
+		},
+		{
+			"path": "../../packages/pdf-engine"
+		},
+		{
+			"path": "../../packages/shared"
+		}
 	]
 }

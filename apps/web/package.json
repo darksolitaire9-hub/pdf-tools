@@ -17,6 +17,11 @@
 		"test": "pnpm run test:unit -- --run && pnpm run test:e2e",
 		"test:e2e": "playwright test"
 	},
+	"dependencies": {
+		"@pdf-tools/domain": "workspace:*",
+		"@pdf-tools/pdf-engine": "workspace:*",
+		"@pdf-tools/shared": "workspace:*"
+	},
 	"devDependencies": {
 		"@commitlint/cli": "^20.3.1",
 		"@commitlint/config-conventional": "^20.3.1",

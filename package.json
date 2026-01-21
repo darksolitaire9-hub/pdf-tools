@@ -3,10 +3,6 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
 	"lint-staged": {
 		"*.{ts,js,svelte}": [
 			"eslint --fix",
@@ -24,8 +20,10 @@
 		"build": "pnpm -r build",
 		"test": "pnpm -r test",
 		"lint": "pnpm -r lint",
+		"check": "pnpm -r --parallel run check",
 		"type-check": "tsc --noEmit",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^20.3.1",
