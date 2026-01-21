@@ -10,7 +10,6 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,12 +25,16 @@ jobs:
           node-version: '24'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies (include devDependencies)
+        run: pnpm install --frozen-lockfile --prod=false
+
+      - name: Debug (verify svelte-kit exists)
+        run: |
+          pnpm --filter "@pdf-tools/web" list @sveltejs/kit || true
+          ls -la apps/web/node_modules/.bin || true
 
       - name: Generate SvelteKit files
-        working-directory: apps/web
-        run: pnpm exec svelte-kit sync
+        run: pnpm --filter "@pdf-tools/web" run sync
 
       - name: Run ESLint
         run: pnpm run lint
@@ -39,7 +42,6 @@ jobs:
   format:
     name: Check Code Format
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,8 +57,8 @@ jobs:
           node-version: '24'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies (include devDependencies)
+        run: pnpm install --frozen-lockfile --prod=false
 
       - name: Check formatting with Prettier
         run: pnpm run format:check
@@ -64,7 +66,6 @@ jobs:
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,15 +81,14 @@ jobs:
           node-version: '24'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies (include devDependencies)
+        run: pnpm install --frozen-lockfile --prod=false
 
       - name: Build workspace packages
         run: pnpm --filter "@pdf-tools/domain" --filter "@pdf-tools/pdf-engine" --filter "@pdf-tools/shared" build
 
       - name: Generate SvelteKit files
-        working-directory: apps/web
-        run: pnpm exec svelte-kit sync
+        run: pnpm --filter "@pdf-tools/web" run sync
 
       - name: Run svelte-check
         run: pnpm run check
