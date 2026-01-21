@@ -1,6 +1,7 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
+		"types": ["node", "vitest/globals"],
 		"paths": {
 			"$lib/*": ["src/lib/*"],
 			"$app/*": ["./.svelte-kit/types/src/app/*"]
