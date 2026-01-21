@@ -51,3 +51,6 @@ pnpm-workspace.yaml
 
 # SvelteKit config cache
 svelte.config.js.timestamp-*
+
+# TypeScript incremental build info
+*.tsbuildinfo

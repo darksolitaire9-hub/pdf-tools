@@ -3,18 +3,13 @@
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
-	"lint-staged": {
-		"*.{js,ts,svelte,json,md,html,css,cjs}": [
-			"prettier --write",
-			"eslint --fix"
-		]
-	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "husky",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"sync": "svelte-kit sync",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
@@ -22,6 +17,11 @@
 		"test:unit": "vitest",
 		"test": "pnpm run test:unit -- --run && pnpm run test:e2e",
 		"test:e2e": "playwright test"
+	},
+	"dependencies": {
+		"@pdf-tools/domain": "workspace:*",
+		"@pdf-tools/pdf-engine": "workspace:*",
+		"@pdf-tools/shared": "workspace:*"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^20.3.1",

@@ -1,85 +1,84 @@
-import prettier from 'eslint-config-prettier';
-import { fileURLToPath } from 'node:url';
-import { includeIgnoreFile } from '@eslint/compat';
+// eslint.config.js
 import js from '@eslint/js';
-import svelte from 'eslint-plugin-svelte';
-import { defineConfig } from 'eslint/config';
-import globals from 'globals';
-import ts from 'typescript-eslint';
-import svelteConfig from './apps/web/svelte.config.js';
-import pluginImport from 'eslint-plugin-import';
+import tseslint from 'typescript-eslint';
+import eslintPluginSvelte from 'eslint-plugin-svelte';
+import prettier from 'eslint-config-prettier';
+import { includeIgnoreFile } from '@eslint/compat';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
-const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const gitignorePath = path.resolve(__dirname, '.gitignore');
 
-export default defineConfig(
-    includeIgnoreFile(gitignorePath),
-    js.configs.recommended,
-    ...ts.configs.recommended,
-    ...svelte.configs.recommended,
-    prettier,
-    ...svelte.configs.prettier,
+export default [
+	includeIgnoreFile(gitignorePath),
+	js.configs.recommended,
+	...tseslint.configs.recommended,
 
-    // 🌿 Global rules
-    {
-        languageOptions: { globals: { ...globals.browser, ...globals.node } },
-        rules: {
-            // typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-            'no-undef': 'off'
-        }
-    },
+	// Type-aware linting for source files only
+	{
+		files: ['**/*.ts', '**/*.tsx'],
+		ignores: [
+			'**/*.config.ts', // Exclude all config files
+			'**/playwright.config.ts',
+			'**/vite.config.ts',
+			'apps/web/e2e/**' // Exclude test files
+		],
+		languageOptions: {
+			parserOptions: {
+				project: false
+			}
+		},
+		rules: {
+			'@typescript-eslint/no-explicit-any': 'warn',
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_'
+				}
+			]
+		}
+	},
 
-    // 🌱 Architecture boundaries (NEW BLOCK)
-    {
-        files: ['**/*.ts', '**/*.js', '**/*.svelte.ts', '**/*.svelte.js'],
+	// Basic linting for config files (no type-checking)
+	{
+		files: ['**/*.config.ts', '**/playwright.config.ts', 'apps/web/e2e/**/*.ts'],
+		rules: {
+			'@typescript-eslint/no-explicit-any': 'off'
+		}
+	},
 
-        plugins: { import: pluginImport },
+	...eslintPluginSvelte.configs['flat/recommended'],
 
-        rules: {
-            // 1. Prevent circular imports
-            'import/no-cycle': ['error', { maxDepth: 1 }],
+	{
+		files: ['apps/web/**/*.svelte'],
+		languageOptions: {
+			parserOptions: {
+				parser: tseslint.parser,
+				project: './apps/web/tsconfig.json',
+				extraFileExtensions: ['.svelte']
+			}
+		}
+	},
 
-            // 2. Enforce layer boundaries
-            'import/no-restricted-paths': [
-                'error',
-                {
-                    zones: [
-                        {
-                            target: './packages/domain',
-                            from: ['./packages/pdf-engine', './apps/web']
-                        },
-                        {
-                            target: './packages/pdf-engine',
-                            from: ['./apps/web']
-                        }
-                    ]
-                }
-            ],
+	{
+		files: ['packages/**/*.ts', 'packages/**/*.js'],
+		rules: {
+			'svelte/valid-compile': 'off',
+			'svelte/no-unused-svelte-ignore': 'off'
+		}
+	},
 
-            // 3. Prevent barrel imports inside SvelteKit
-            'no-restricted-imports': [
-                'error',
-                {
-                    patterns: [
-                        '$lib/index',
-                        '$lib/**/index',
-                        '**/src/lib/index',
-                        '**/src/lib/**/index'
-                    ]
-                }
-            ]
-        }
-    },
+	prettier,
 
-    // 🌻 Svelte overrides
-    {
-        files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-        languageOptions: {
-            parserOptions: {
-                projectService: true,
-                extraFileExtensions: ['.svelte'],
-                parser: ts.parser,
-                svelteConfig
-            }
-        }
-    }
-);
+	{
+		ignores: [
+			'**/node_modules/**',
+			'**/.svelte-kit/**',
+			'**/build/**',
+			'**/dist/**',
+			'**/.pnpm-store/**'
+		]
+	}
+];

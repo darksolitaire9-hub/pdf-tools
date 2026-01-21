@@ -1,2 +1,2 @@
 // placeholder
-export const somethingElse = 'hello from pdf-engine'
+export const somethingElse = 'hello from pdf-engine';

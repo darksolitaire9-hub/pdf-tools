@@ -13,5 +13,4 @@
 		}
 	],
 	"tailwindStylesheet": "apps/web/src/routes/layout.css"
-
 }

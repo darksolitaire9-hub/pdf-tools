@@ -1,3 +1,2 @@
 // placeholder
-export const something = 'hello from domain'
-
+export const something = 'hello from domain';

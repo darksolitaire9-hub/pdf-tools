@@ -1,2 +1,2 @@
 // placeholder
-export const util = () => 'hello from shared'
+export const util = () => 'hello from shared';
