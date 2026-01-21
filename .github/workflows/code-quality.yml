@@ -30,7 +30,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate SvelteKit files
-        run: pnpm --filter "@pdf-tools/web" exec svelte-kit sync
+        run: pnpm --filter "@pdf-tools/web" run sync
 
       - name: Run ESLint
         run: pnpm run lint
@@ -86,7 +86,7 @@ jobs:
         run: pnpm --filter "@pdf-tools/domain" --filter "@pdf-tools/pdf-engine" --filter "@pdf-tools/shared" build
 
       - name: Generate SvelteKit files
-        run: pnpm --filter "@pdf-tools/web" exec svelte-kit sync
+        run: pnpm --filter "@pdf-tools/web" run sync
 
       - name: Run svelte-check
         run: pnpm run check
