@@ -28,17 +28,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Debug workspace structure
-        run: |
-          echo "=== Checking @pdf-tools/web node_modules ==="
-          ls -la apps/web/node_modules/.bin/ 2>/dev/null || echo "No .bin directory in apps/web"
-          echo "=== Checking root node_modules ==="
-          ls -la node_modules/.bin/ 2>/dev/null | head -20 || echo "No root node_modules"
-          echo "=== Verifying @sveltejs/kit ==="
-          pnpm list @sveltejs/kit 2>/dev/null || echo "@sveltejs/kit not found in pnpm list"
-
       - name: Generate SvelteKit files
-        run: pnpm --filter "@pdf-tools/web" run sync
+        run: cd apps/web && npx svelte-kit sync
 
       - name: Run ESLint
         run: pnpm run lint
@@ -88,25 +79,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Debug workspace structure (pre-build)
-        run: |
-          echo "=== Package structure ==="
-          find apps/web/node_modules/.bin -type f 2>/dev/null | head -10 || echo "No .bin files found"
-          echo "=== Workspace list ==="
-          pnpm list -r --depth=0 2>/dev/null | head -20 || echo "pnpm list failed"
-
       - name: Build workspace packages
         run: pnpm --filter "@pdf-tools/domain" --filter "@pdf-tools/pdf-engine" --filter "@pdf-tools/shared" build
 
-      - name: Verify dependencies before sync
-        run: |
-          echo "=== Checking if svelte-kit is available ==="
-          pnpm --filter "@pdf-tools/web" list @sveltejs/kit 2>&1
-          echo "=== Checking apps/web/.bin ==="
-          ls -la apps/web/node_modules/.bin/ 2>&1 | grep svelte || echo "svelte-kit not in .bin"
-
       - name: Generate SvelteKit files
-        run: pnpm --filter "@pdf-tools/web" run sync
+        run: cd apps/web && npx svelte-kit sync
 
       - name: Run svelte-check
         run: pnpm run check
