@@ -23,29 +23,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Debug workspace structure
         run: |
-          echo "=== Checking apps/web/node_modules ==="
-          ls -la apps/web/node_modules/.bin/ || echo "No .bin directory"
-          echo "=== Checking @sveltejs/kit installation ==="
-          pnpm --filter "@pdf-tools/web" list @sveltejs/kit
+          echo "=== Checking @pdf-tools/web node_modules ==="
+          ls -la apps/web/node_modules/.bin/ 2>/dev/null || echo "No .bin directory in apps/web"
+          echo "=== Checking root node_modules ==="
+          ls -la node_modules/.bin/ 2>/dev/null | head -20 || echo "No root node_modules"
+          echo "=== Verifying @sveltejs/kit ==="
+          pnpm list @sveltejs/kit 2>/dev/null || echo "@sveltejs/kit not found in pnpm list"
 
       - name: Generate SvelteKit files
         run: pnpm --filter "@pdf-tools/web" run sync
@@ -69,19 +59,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -105,25 +83,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Debug workspace structure (pre-build)
+        run: |
+          echo "=== Package structure ==="
+          find apps/web/node_modules/.bin -type f 2>/dev/null | head -10 || echo "No .bin files found"
+          echo "=== Workspace list ==="
+          pnpm list -r --depth=0 2>/dev/null | head -20 || echo "pnpm list failed"
+
       - name: Build workspace packages
         run: pnpm --filter "@pdf-tools/domain" --filter "@pdf-tools/pdf-engine" --filter "@pdf-tools/shared" build
+
+      - name: Verify dependencies before sync
+        run: |
+          echo "=== Checking if svelte-kit is available ==="
+          pnpm --filter "@pdf-tools/web" list @sveltejs/kit 2>&1
+          echo "=== Checking apps/web/.bin ==="
+          ls -la apps/web/node_modules/.bin/ 2>&1 | grep svelte || echo "svelte-kit not in .bin"
 
       - name: Generate SvelteKit files
         run: pnpm --filter "@pdf-tools/web" run sync
