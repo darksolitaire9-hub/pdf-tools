@@ -1,23 +1,7 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
-	"compilerOptions": {
-		"types": ["node", "vitest/globals"],
-		"paths": {
-			"$lib/*": ["src/lib/*"],
-			"$app/*": ["./.svelte-kit/types/src/app/*"]
-		}
-	},
-	"include": [
-		"src",
-		"src/**/*.ts",
-		"src/**/*.svelte",
-		"src/**/*.spec.ts",
-		"src/**/*.test.ts",
-		"e2e/**/*.ts"
-	],
-	"references": [
-		{ "path": "../../packages/domain" },
-		{ "path": "../../packages/pdf-engine" },
-		{ "path": "../../packages/shared" }
-	]
+  "extends": "./.svelte-kit/tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["src"]
 }
